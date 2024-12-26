@@ -2,12 +2,15 @@ package com.akwok.simpletuner
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.akwok.simpletuner.models.Accuracy
 import com.akwok.simpletuner.tuner.PitchDetector
 import com.akwok.simpletuner.views.SettingsFragment
-import com.akwok.simpletuner.R
 import org.junit.Assert
 import org.junit.Test
-import org.mockito.ArgumentMatchers.*
+import org.mockito.ArgumentMatchers.anyBoolean
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
@@ -118,6 +121,28 @@ class PreferencesServiceUnitTest {
 
             val prefs = PreferencesService(ctxMock)
             val actual = prefs.getReferenceFreq()
+
+            Assert.assertEquals(expected, actual)
+        }
+    }
+
+    @Test
+    fun getAccuracy() {
+        val cases = listOf(
+            Pair("low", Accuracy.LOW),
+            Pair("med", Accuracy.MEDIUM),
+            Pair("high", Accuracy.HIGH)
+        )
+
+        cases.forEach { case ->
+            val retVal = case.first
+            val expected = case.second
+
+            val ctxMock = mockContext(R.string.accuracy_pref, retVal)
+            whenever(ctxMock.getString(R.string.accuracy_default)).thenReturn("med")
+
+            val prefs = PreferencesService(ctxMock)
+            val actual = prefs.getAccuracy()
 
             Assert.assertEquals(expected, actual)
         }

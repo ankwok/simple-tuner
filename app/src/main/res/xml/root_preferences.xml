@@ -34,4 +34,12 @@
         app:title="@string/error_text_title"
         android:defaultValue="true"/>
 
+    <ListPreference
+        app:defaultValue="@string/accuracy_default"
+        app:entries="@array/accuracy_entries"
+        app:entryValues="@array/accuracy_values"
+        app:key="@string/accuracy_pref"
+        app:title="@string/accuracy_title"
+        app:summary="@string/accuracy_summary" />
+
 </PreferenceScreen>

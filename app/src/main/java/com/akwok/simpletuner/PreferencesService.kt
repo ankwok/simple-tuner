@@ -3,6 +3,7 @@ package com.akwok.simpletuner
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.akwok.simpletuner.models.Accuracy
 import com.akwok.simpletuner.tuner.PitchDetector
 import com.akwok.simpletuner.tuner.PitchHelper
 import com.akwok.simpletuner.views.SettingsFragment
@@ -42,6 +43,29 @@ class PreferencesService(private val ctx: Context) {
         val editor = getPrefs().edit()
         editor.putString(ctx.getString(R.string.ref_A_pref), freq.toString())
         editor.apply()
+    }
+
+    fun getAccuracy(): Accuracy {
+        val accuracyStr = getStringPref(getPrefs(), ctx.getString(R.string.accuracy_pref), ctx.getString(R.string.accuracy_default))
+        return when(accuracyStr) {
+            "low" -> Accuracy.LOW
+            "med" -> Accuracy.MEDIUM
+            "high" -> Accuracy.HIGH
+            else -> throw Exception("Unknown accuracy value: $accuracyStr")
+        }
+    }
+
+    fun getAccuracyString(): String {
+        val accuracyStr = getStringPref(getPrefs(), ctx.getString(R.string.accuracy_pref), ctx.getString(R.string.accuracy_default))
+        return getAccuracyString(accuracyStr)
+    }
+
+    fun getAccuracyString(value: String): String {
+        val accuracyValues = ctx.resources.getStringArray(R.array.accuracy_values)
+        val accuracyEntries = ctx.resources.getStringArray(R.array.accuracy_entries)
+        return accuracyValues.zip(accuracyEntries)
+            .first { pair -> pair.first == value }
+            .second
     }
 
     private fun getPrefs(): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)

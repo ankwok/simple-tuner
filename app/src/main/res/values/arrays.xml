@@ -9,4 +9,16 @@
         <item>english</item>
         <item>solfege</item>
     </string-array>
+
+    <string-array name="accuracy_entries">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="accuracy_values">
+        <item>low</item>
+        <item>med</item>
+        <item>high</item>
+    </string-array>
 </resources>

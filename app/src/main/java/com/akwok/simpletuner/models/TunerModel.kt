@@ -33,13 +33,17 @@ class TunerModel : ViewModel() {
         MutableLiveData(PitchDetector.defaultDetectionThreshold)
     }
 
+    val sampleSize: MutableLiveData<Int> by lazy {
+        MutableLiveData(DEFAULT_SAMPLE_SIZE)
+    }
+
     private val isRecording: MutableLiveData<Boolean> by lazy { MutableLiveData(false) }
 
     private fun run() {
         viewModelScope.launch(Dispatchers.IO) {
             val micReader = MicReader()
             var tuner = PitchDetector(PitchHelper.defaultReference.toDouble())
-            val audioData = micReader.getBufferInstance(sampleSize)
+            val audioData = micReader.getBufferInstance(sampleSize.value ?: DEFAULT_SAMPLE_SIZE)
 
             micReader.startRecording()
 
@@ -61,6 +65,6 @@ class TunerModel : ViewModel() {
     }
 
     companion object {
-        private const val sampleSize = 4096
+        private const val DEFAULT_SAMPLE_SIZE = 8192
     }
 }

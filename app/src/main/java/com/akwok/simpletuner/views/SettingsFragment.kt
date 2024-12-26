@@ -43,6 +43,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             true
         }
+
+        val accuracyPref = findPreference<ListPreference>(getString(R.string.accuracy_pref))!!
+        val accuracySetting = preferencesService.getAccuracyString()
+        accuracyPref.summary = getString(R.string.accuracy_summary, accuracySetting)
+        accuracyPref.setOnPreferenceChangeListener { _, newValue ->
+            val setting = preferencesService.getAccuracyString(newValue as String)
+            accuracyPref.summary = getString(R.string.accuracy_summary, setting)
+            true
+        }
     }
 
     companion object {

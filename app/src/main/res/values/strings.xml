@@ -17,6 +17,8 @@
     <string name="note_name_default">english</string>
     <string name="dark_mode_pref">dark_mode_pref</string>
     <string name="error_text_pref">error_text_pref</string>
+    <string name="accuracy_pref">accuracy_pref</string>
+    <string name="accuracy_default">med</string>
 
     <string name="settings_title">Settings</string>
     <string name="reference_A_title">Reference A frequency</string>
@@ -27,5 +29,6 @@
     <string name="note_name_title">Note name convention</string>
     <string name="dark_mode_title">Dark mode</string>
     <string name="error_text_title">Show frequency and error text</string>
-    <string name="tuner_mode_title">Tuner mode</string>
+    <string name="accuracy_title">Accuracy</string>
+    <string name="accuracy_summary">%1$s. More accuracy uses more CPU</string>
 </resources>

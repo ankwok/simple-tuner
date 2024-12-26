@@ -65,15 +65,21 @@ class TunerActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        startRecordingSound()
         syncRefPicker()
         syncThreshold()
+        syncAccuracy()
+        startRecordingSound()
         tunerView.start()
     }
 
     private fun syncThreshold() {
         val model: TunerModel by viewModels()
         model.detectionThreshold.postValue(preferencesService.getDetectionThreshold())
+    }
+
+    private fun syncAccuracy() {
+        val model: TunerModel by viewModels()
+        model.sampleSize.postValue(preferencesService.getAccuracy().sampleSize)
     }
 
     override fun onPause() {
