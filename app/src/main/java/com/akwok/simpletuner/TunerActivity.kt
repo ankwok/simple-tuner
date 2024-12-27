@@ -91,7 +91,7 @@ class TunerActivity : AppCompatActivity() {
         tunerView.pause()
     }
 
-    fun onSettingsClick(view: View) = SettingsActivity.gotoSettings(this)
+    fun onSettingsClick(@Suppress("UNUSED_PARAMETER") view: View) = SettingsActivity.gotoSettings(this)
 
     private fun setupTextUpdater() {
         val obs = Observer<PitchError?> { err -> if (err != null) textUpdater(err) }
