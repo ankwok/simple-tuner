@@ -239,7 +239,7 @@ class GaugeView(context: Context, attrs: AttributeSet?) : TunerView(context, att
             return color
         }
 
-        fun interpHsv(@ColorInt color1: Int, @ColorInt color2: Int, t: Float): Int {
+        private fun interpHsv(@ColorInt color1: Int, @ColorInt color2: Int, t: Float): Int {
             val hsv1 = FloatArray(3)
             Color.colorToHSV(color1, hsv1)
 

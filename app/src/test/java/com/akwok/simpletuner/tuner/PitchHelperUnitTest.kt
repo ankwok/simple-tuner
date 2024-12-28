@@ -1,9 +1,7 @@
 package com.akwok.simpletuner.tuner
 
-import com.akwok.simpletuner.tuner.Pitch
-import com.akwok.simpletuner.tuner.PitchHelper
-import com.akwok.simpletuner.tuner.PitchName
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class PitchHelperUnitTest {
