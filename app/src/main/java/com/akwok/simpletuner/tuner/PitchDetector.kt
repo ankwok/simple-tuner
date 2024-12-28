@@ -5,11 +5,12 @@ import org.jtransforms.fft.FloatFFT_1D
 import kotlin.math.max
 import kotlin.math.pow
 
-class PitchDetector(val ref: Double, val detectionThreshold: Double = defaultDetectionThreshold) {
+class PitchDetector(val ref: Double, private val audioSize: Int, val detectionThreshold: Double = defaultDetectionThreshold) {
 
     private val pitches = PitchHelper.getFrequencies(ref)
     private val smallestPeriod = 1.0 / (pitches.last().freq * PitchHelper.centRatio.pow(49))
     private val longestPeriod = 1.0 / (pitches.first().freq * PitchHelper.centRatio.pow(-50))
+    private val fft = FloatFFT_1D(audioSize.toLong())
 
     private var kalmanFilter: KalmanUpdater? = null
     private var currentPitch: Pitch? = null
@@ -119,7 +120,7 @@ class PitchDetector(val ref: Double, val detectionThreshold: Double = defaultDet
     }
 
     private fun autocorrelate(audio: FloatArray): FloatArray {
-        val fft = FloatFFT_1D(audio.size.toLong())
+        require(audio.size == audioSize)
 
         val window = FloatArray(audio.size)
         audio.copyInto(window, 0, 0, audio.size / 2)

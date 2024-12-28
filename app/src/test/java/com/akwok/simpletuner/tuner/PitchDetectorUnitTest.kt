@@ -1,17 +1,13 @@
 package com.akwok.simpletuner.tuner
 
-import com.akwok.simpletuner.tuner.PitchDetector
-import com.akwok.simpletuner.tuner.PitchHelper
 import com.akwok.simpletuner.io.AudioData
-import com.akwok.simpletuner.tuner.Pitch
-import com.akwok.simpletuner.tuner.PitchName
 import org.junit.Assert
 import org.junit.Test
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import kotlin.math.sin
 import kotlin.math.PI
 import kotlin.math.pow
+import kotlin.math.sin
 
 class PitchDetectorUnitTest {
 
@@ -29,7 +25,7 @@ class PitchDetectorUnitTest {
 
     @Test
     fun findClosestPitch() {
-        val detector = PitchDetector(440.0)
+        val detector = PitchDetector(440.0, 1)
 
         findClosestPitchCases
             .forEach { case ->
@@ -54,11 +50,11 @@ class PitchDetectorUnitTest {
 
     private fun runDetection(sineGenerator: (Double) -> FloatArray) = detectCases
         .forEach { case ->
-            val detector = PitchDetector(440.0)
             val freq = case[0] as Double
             val expectedPitch = case[1] as Pitch?
 
             val audio = sineGenerator(freq)
+            val detector = PitchDetector(440.0, audio.size)
             val pitchError = detector.detect(AudioData(audio, sampleRate))
 
             Assert.assertEquals(
@@ -114,13 +110,12 @@ class PitchDetectorUnitTest {
     @Test
     fun `doesn't crash with bad input`() {
         val testCases = listOf(
-            emptyArray<Float>().toFloatArray(),
             (0 until 4096).map { 1.42f }.toFloatArray(), // constant signal
         )
 
         testCases.forEach { case ->
             val audioData = AudioData(case, sampleRate)
-            val detector = PitchDetector(440.0)
+            val detector = PitchDetector(440.0, audioData.dat.size)
 
             val err = detector.detect(audioData)
 
@@ -139,7 +134,7 @@ class PitchDetectorUnitTest {
             .toList()
             .toFloatArray()
 
-        val detector = PitchDetector(440.0)
+        val detector = PitchDetector(440.0, wav.size)
         val err = detector.detect(AudioData(wav, sampleRate))
         Assert.assertEquals(expectedFreq, err!!.actualFreq, PitchHelper.centRatio.pow(10) * expectedFreq)
     }

@@ -42,8 +42,9 @@ class TunerModel : ViewModel() {
     private fun run() {
         viewModelScope.launch(Dispatchers.IO) {
             val micReader = MicReader()
-            var tuner = PitchDetector(PitchHelper.defaultReference.toDouble())
-            val audioData = micReader.getBufferInstance(sampleSize.value ?: DEFAULT_SAMPLE_SIZE)
+            val sampleSize = sampleSize.value ?: DEFAULT_SAMPLE_SIZE
+            var tuner = PitchDetector(PitchHelper.defaultReference.toDouble(), sampleSize)
+            val audioData = micReader.getBufferInstance(sampleSize)
 
             micReader.startRecording()
 
@@ -52,9 +53,9 @@ class TunerModel : ViewModel() {
                 val threshold = detectionThreshold.value ?: PitchDetector.defaultDetectionThreshold
 
                 if (ref != tuner.ref) {
-                    tuner = PitchDetector(ref, threshold)
+                    tuner = PitchDetector(ref, sampleSize, threshold)
                 } else if (threshold != tuner.detectionThreshold) {
-                    tuner = PitchDetector(ref, threshold)
+                    tuner = PitchDetector(ref, sampleSize, threshold)
                 }
 
                 pitchError.postValue(tuner.detect(micReader.read(audioData)))
