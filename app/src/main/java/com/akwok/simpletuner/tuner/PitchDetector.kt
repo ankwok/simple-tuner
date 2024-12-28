@@ -82,10 +82,19 @@ class PitchDetector(val ref: Double, private val audioSize: Int, val detectionTh
             return Moments(Double.NaN, Double.NaN)
         }
 
-        val deltas = List(zeros.size - 1) { i -> zeros[i + 1] - zeros[i] }
+        val deltas = buildDeltasArray(zeros)
         val avg = deltas.average()
         val variance = calcVariance(deltas, avg)
         return Moments(avg, variance)
+    }
+
+    private fun buildDeltasArray(zeros: List<Double>): DoubleArray {
+        val result = DoubleArray(zeros.size - 1)
+        for (i in 0 until zeros.size - 1) {
+            result[i] = zeros[i + 1] - zeros[i]
+        }
+
+        return result
     }
 
     private fun findZeros(audioDat: AudioData, offset: Double): List<Double> {
@@ -114,7 +123,7 @@ class PitchDetector(val ref: Double, private val audioSize: Int, val detectionTh
         return zeros
     }
 
-    private fun calcVariance(arr: List<Double>, avg: Double): Double {
+    private fun calcVariance(arr: DoubleArray, avg: Double): Double {
         var variance = 0.0
         for (value in arr) {
             val diff = value - avg
