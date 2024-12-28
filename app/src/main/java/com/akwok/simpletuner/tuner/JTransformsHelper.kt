@@ -13,8 +13,9 @@ object JTransformsHelper {
         require(arr.size % 2 == 0)
 
         val n = arr.size
-        (1 until n / 2)
-            .forEach { i -> arr[2*i + 1] = -arr[2*i + 1] }
+        for (i in 1 until n / 2) {
+            arr[2*i + 1] = -arr[2*i + 1]
+        }
     }
 
     fun mult(arr1: FloatArray, arr2: FloatArray): FloatArray {
@@ -24,11 +25,10 @@ object JTransformsHelper {
         res[0] = arr1[0] * arr2[0]
         res[1] = arr1[1] * arr2[1]
 
-        (1 until arr1.size / 2)
-            .forEach { i ->
-                res[2*i] = arr1[2*i] * arr2[2*i] - arr1[2*i + 1] * arr2[2*i + 1]
-                res[2*i + 1] = arr1[2*i] * arr2[2*i + 1] + arr1[2*i + 1] * arr2[2*i]
-            }
+        for (i in 1 until arr1.size / 2) {
+            res[2*i] = arr1[2*i] * arr2[2*i] - arr1[2*i + 1] * arr2[2*i + 1]
+            res[2*i + 1] = arr1[2*i] * arr2[2*i + 1] + arr1[2*i + 1] * arr2[2*i]
+        }
 
         return res
     }
