@@ -92,7 +92,12 @@ class PitchDetector(val ref: Double, private val audioSize: Int, val detectionTh
         val dt = 1.0 / audioDat.sampleRate
         val audio = audioDat.dat
 
-        val zeros = MutableList(0) { 0.0 }
+        // Initialize list with initial capacity of 110% expected number of zero crossings for the current pitch
+        val currentFreq = currentPitch?.freq
+        val duration = audio.size * dt
+        val initCapacity = if (currentFreq != null) (1.1 * currentFreq * duration).toInt() else 0
+        val zeros = ArrayList<Double>(initCapacity)
+
         for (i in 0 until (audio.size - 1)) {
             val t1 = dt * i
             val x1 = audio[i]
