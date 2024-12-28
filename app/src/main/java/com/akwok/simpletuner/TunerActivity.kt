@@ -118,7 +118,8 @@ class TunerActivity : AppCompatActivity() {
         freq.text = getString(R.string.note_freq, pitchError.actualFreq)
 
         val centsErr = findViewById<TextView>(R.id.cents_error)
-        centsErr.text = getString(R.string.cents_err, pitchError.errorInCents.roundToInt())
+        val errorInCents = pitchError.errorInCents.roundToInt()
+        centsErr.text = resources.getQuantityString(R.plurals.cents_err, errorInCents, errorInCents)
     }
 
     private fun setupRefPicker() {

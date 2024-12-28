@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="cents_err">
+        <item quantity="one">%1$+d cent</item>
+        <item quantity="other">%1$+d cents</item>
+    </plurals>
+</resources>
