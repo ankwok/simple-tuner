@@ -14,6 +14,12 @@ import kotlin.math.*
 class GaugeView(context: Context, attrs: AttributeSet?) : TunerView(context, attrs) {
     constructor(context: Context) : this(context, null)
 
+    private val tickColor = Paint().apply {
+        isAntiAlias = true
+        color = resources.getColor(R.color.tick_color, context.theme)
+        style = Paint.Style.FILL_AND_STROKE
+    }
+    
     private var needleCenter: Float = -1f
     private var needleVelocity: Float = 0f
 
@@ -33,6 +39,10 @@ class GaugeView(context: Context, attrs: AttributeSet?) : TunerView(context, att
         get() = if (height > 0) paddingPct * height else 0f
 
     private val animator = TimeAnimator()
+
+    private var widthForTicks = width
+    private var majorTickCenters = FloatArray(0)
+    private var minorTickCenters = FloatArray(0)
 
     init {
         animator.setTimeListener { _, _, deltaTime ->
@@ -101,17 +111,13 @@ class GaugeView(context: Context, attrs: AttributeSet?) : TunerView(context, att
     }
 
     private fun drawTicks(canvas: Canvas) {
-        val tickColor = Paint().apply {
-            isAntiAlias = true
-            color = resources.getColor(R.color.tick_color, context.theme)
-            style = Paint.Style.FILL_AND_STROKE
-        }
+        ensureTickCenters()
 
         val majorTickTop = height.toFloat() / 2 - height.toFloat() / 8
         val majorTickBottom = height.toFloat() / 2 + height.toFloat() / 8
         val majorTickHalfWidth = majorTicksWidthPct * width / 2
-        val majorTickCenters = majorTicks.map { x -> computeNeedleCenter(x, width, widthPadding) }
-        majorTickCenters.forEach { center ->
+
+        for (center in majorTickCenters) {
             canvas.drawRect(
                 center - majorTickHalfWidth,
                 majorTickTop,
@@ -124,8 +130,8 @@ class GaugeView(context: Context, attrs: AttributeSet?) : TunerView(context, att
         val minorTickTop = height.toFloat() / 2 - height.toFloat() / 16
         val minorTickBottom = height.toFloat() / 2 + height.toFloat() / 16
         val minorTickHalfWidth = minorTicksWidthPct * width / 2
-        val minorTickCenters = minorTicks.map { x -> computeNeedleCenter(x, width, widthPadding) }
-        minorTickCenters.forEach { center ->
+
+        for (center in minorTickCenters) {
             canvas.drawRect(
                 center - minorTickHalfWidth,
                 minorTickTop,
@@ -134,6 +140,25 @@ class GaugeView(context: Context, attrs: AttributeSet?) : TunerView(context, att
                 tickColor
             )
         }
+    }
+
+    private fun ensureTickCenters() {
+        if (width == widthForTicks && majorTickCenters.isNotEmpty() && minorTickCenters.isNotEmpty()) {
+            return
+        }
+
+        widthForTicks = width
+        majorTickCenters = getTickCenters(majorTicks)
+        minorTickCenters = getTickCenters(minorTicks)
+    }
+
+    private fun getTickCenters(ticks: FloatArray): FloatArray {
+        val centers = FloatArray(ticks.size)
+        for (i in ticks.indices) {
+            centers[i] = computeNeedleCenter(ticks[i], width, widthPadding)
+        }
+
+        return centers
     }
 
     private fun drawNeedle(canvas: Canvas) {
@@ -171,11 +196,12 @@ class GaugeView(context: Context, attrs: AttributeSet?) : TunerView(context, att
         private const val kp = 36f
         private val damping = sqrt(4 * kp) // critically damped
 
-        private val majorTicks = (-10 .. 10).map { i -> 5f * i }
+        private val majorTicks = (-10 .. 10).map { i -> 5f * i }.toFloatArray()
         private const val majorTicksWidthPct = 0.01f
         private val minorTicks = (-50 .. 50)
             .map { x -> x.toFloat() }
-            .filterNot { x -> majorTicks.contains(x) }
+            .filterNot { x -> majorTicks.any { tick -> x == tick } }
+            .toFloatArray()
         private const val minorTicksWidthPct = 0.004f
 
         private const val mehError = 10f // cents
