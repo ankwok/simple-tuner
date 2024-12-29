@@ -86,6 +86,19 @@ class PitchDetectorUnitTest {
     }
 
     @Test
+    fun `returns null if input too soft`() {
+        val tooQuiet = sineWave(440.0, 0.0)
+            .map { x -> 0.01f * x }
+            .toFloatArray()
+        val audioData = AudioData(tooQuiet, sampleRate)
+        val detector = PitchDetector(440.0, audioData.dat.size)
+
+        val err = detector.detect(audioData)
+
+        Assert.assertNull(err)
+    }
+
+    @Test
     fun detectVoice() {
         val cases = listOf(
             "voice_96.24.csv" to 96.24,
@@ -130,7 +143,7 @@ class PitchDetectorUnitTest {
         val reader = BufferedReader(InputStreamReader(str))
         val wav = reader
             .lineSequence()
-            .map { line -> line.toFloat() }
+            .map { line -> 10 * line.toFloat() } // Multiply by 10 to pass the silence threshold
             .toList()
             .toFloatArray()
 

@@ -20,7 +20,7 @@ class PitchDetector(val ref: Double, private val audioSize: Int, val detectionTh
     }
 
     private fun detectWithKalmanFilter(audioDat: AudioData): PitchError? {
-        if (!audioDat.dat.any { it > detectionThreshold }) return null
+        if (!isAudioValid(audioDat)) return null
 
         val measurement = autocorrDetect(audioDat) ?: return null
 
@@ -39,6 +39,31 @@ class PitchDetector(val ref: Double, private val audioSize: Int, val detectionTh
             kalmanFilter!!.stateEstimate.x,
             kalmanFilter!!.stateEstimate.P
         )
+    }
+
+    private fun isAudioValid(audioDat: AudioData): Boolean {
+        val audio = audioDat.dat
+        val energyThreshold = detectionThreshold * detectionThreshold * silenceWindowSize
+
+        var beginSum = 0f
+        for (i in 0 until silenceWindowSize) {
+            beginSum += audio[i] * audio[i]
+        }
+
+        if (beginSum < energyThreshold) {
+            return false
+        }
+
+        var endSum = 0f
+        for (i in audio.size - silenceWindowSize until audio.size) {
+            endSum += audio[i] * audio[i]
+        }
+
+        if (endSum < energyThreshold) {
+            return false
+        }
+
+        return audio.any { it > detectionThreshold }
     }
 
     private fun autocorrDetect(audioDat: AudioData): PitchError? {
@@ -176,6 +201,7 @@ class PitchDetector(val ref: Double, private val audioSize: Int, val detectionTh
         const val defaultDetectionThreshold: Double = 0.1
         const val maxDetectionThreshold = 0.4
         private const val driftInCentsPerSecond = 0.5
+        private const val silenceWindowSize = 1024
 
         private fun getQParameter(sampleSize: Int, sampleRate: Int, measurement: PitchError): Double {
             val durationSeconds = sampleSize.toDouble() / sampleRate
