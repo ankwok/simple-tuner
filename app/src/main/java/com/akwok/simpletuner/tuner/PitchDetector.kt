@@ -45,25 +45,26 @@ class PitchDetector(val ref: Double, private val audioSize: Int, val detectionTh
         val audio = audioDat.dat
         val energyThreshold = detectionThreshold * detectionThreshold * silenceWindowSize
 
-        var beginSum = 0f
+        var movingSum = 0f
         for (i in 0 until silenceWindowSize) {
-            beginSum += audio[i] * audio[i]
+            movingSum += audio[i] * audio[i]
         }
 
-        if (beginSum < energyThreshold) {
+        if (movingSum < energyThreshold) {
             return false
         }
 
-        var endSum = 0f
-        for (i in audio.size - silenceWindowSize until audio.size) {
-            endSum += audio[i] * audio[i]
+        var startIdx = 0
+        for (i in silenceWindowSize until audio.size) {
+            movingSum += (audio[i] * audio[i] - audio[startIdx] * audio[startIdx])
+            if (movingSum < energyThreshold) {
+                return false
+            }
+
+            startIdx++
         }
 
-        if (endSum < energyThreshold) {
-            return false
-        }
-
-        return audio.any { it > detectionThreshold }
+        return true
     }
 
     private fun autocorrDetect(audioDat: AudioData): PitchError? {
@@ -199,7 +200,7 @@ class PitchDetector(val ref: Double, private val audioSize: Int, val detectionTh
     companion object {
         private const val gridSearchNum = 5
         const val defaultDetectionThreshold: Double = 0.1
-        const val maxDetectionThreshold = 0.4
+        const val maxDetectionThreshold = 0.3
         private const val driftInCentsPerSecond = 0.5
         private const val silenceWindowSize = 1024
 

@@ -55,7 +55,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     companion object {
-        const val noiseRejectionMaxValue = 20
+        const val noiseRejectionMaxValue = 40
         const val minRefFreq = 400
         const val maxRefFreq = 500
     }
