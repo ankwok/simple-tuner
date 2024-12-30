@@ -3,6 +3,10 @@ plugins {
     id 'kotlin-android'
 }
 
+kotlin {
+    jvmToolchain 11
+}
+
 android {
     compileSdk 35
 
@@ -10,8 +14,8 @@ android {
         applicationId "com.akwok.simpletuner"
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 26
-        versionName "0.6"
+        versionCode 27
+        versionName "0.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -22,15 +26,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
     testOptions {
         unitTests.includeAndroidResources = true
-    }
-    kotlinOptions {
-        jvmTarget = '17'
     }
     namespace 'com.akwok.simpletuner'
 }
